@@ -1,0 +1,220 @@
+---
+title: "10.22.2019"
+author: "Diane Page"
+date: "10/22/2019"
+output: pdf_document
+---
+
+```{r setup}
+library(tidyverse)
+df = read_csv("horror_movies.csv")
+```
+
+## EDA functions for initial look into data:
+  glimpse(data)
+  names(data)
+  view(data)
+  head(data)
+  str(data)
+  summary(data)
+  sapply(data, class)
+  
+```{r}
+#names(df)
+#glimpse (df)
+```
+
+
+
+```{r split genres}
+
+df$genres <- strsplit(df$genres, split = "| ", fixed = TRUE)
+df$cast <- strsplit(df$cast, split = "|", fixed = TRUE)
+```
+```{r convert date}
+library(lubridate)
+df$release_date <- dmy(df$release_date)
+```
+
+```{r drop extra characters}
+df$title <- substr(df$title,1,nchar(df$title)-7)
+df$movie_run_time <- substr(df$movie_run_time, 1, nchar(df$movie_run_time)-4)
+df$budget <- as.numeric(gsub('[$,]', '', df$budget))
+```
+
+```{r coerce types}
+df$release_country <- as.factor(df$release_country)
+df$movie_rating <- as.factor(df$movie_rating)
+df$movie_run_time <- as.numeric(df$movie_run_time)
+df$language <- as.factor(df$language)
+df$filming_locations <- as.factor(df$filming_locations)
+
+```
+```{r group by state}
+usadf <- filter(df, grepl("USA", df$filming_locations))
+
+georgia <- filter(usadf, grepl("Georgia", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "GA")
+california <- filter(usadf, grepl("California", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "CA")
+texas <- filter(usadf, grepl("Texas", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "TX")
+new_york <- filter(usadf, grepl("New York", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "NY")
+maryland <- filter(usadf, grepl("Maryland", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "MD")
+virginia <- filter(usadf, grepl("Virginia", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "VA")
+mississippi <- filter(usadf, grepl("Mississippi", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "MS")
+washington <- filter(usadf, grepl("Washington", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "WA")
+pennsylvania <- filter(usadf, grepl("Pennsylvania", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "PA")
+florida <- filter(usadf, grepl("Florida", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "FL")
+ohio <- filter(usadf, grepl("Ohio", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "OH")
+louisiana <- filter(usadf, grepl("Louisiana", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "LA")
+tennessee <- filter(usadf, grepl("Tennessee", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "TN")
+ncarolina <- filter(usadf, grepl("North Carolina", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "NC")
+connecticut <- filter(usadf, grepl("Connecticut", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "CT")
+alabama <- filter(usadf, grepl("Alabama", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "AL")
+alaska <- filter(usadf, grepl("Alaska", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "AK")
+arizona <- filter(usadf, grepl("Arizona", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "AZ")
+arkanas <- filter(usadf, grepl("Arkansas", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "AR")
+colorado <- filter(usadf, grepl("Colorado", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "CO")
+idaho <- filter(usadf, grepl("Idaho", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "ID")
+illinois <- filter(usadf, grepl("Illinois", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "IL")
+indiana <- filter(usadf, grepl("Indiana", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "IN")
+iowa <- filter(usadf, grepl("Iowa", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "IA")
+kansas <- filter(usadf, grepl("Kansas", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "KS")
+maine <- filter(usadf, grepl("Maine", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "ME")
+massachusetts <- filter(usadf, grepl("Massachusetts", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "MA")
+michigan <- filter(usadf, grepl("Michigan", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "MI")
+minnesota <- filter(usadf, grepl("Minnesota", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "MN")
+missouri <- filter(usadf, grepl("Missouri", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "MO")
+montana <- filter(usadf, grepl("Montana", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "MT")
+nebraska <- filter(usadf, grepl("Nebraska", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "NE")
+nevada <- filter(usadf, grepl("Nevada", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "NV")
+nhampshire <- filter(usadf, grepl("New Hampshire", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "NH")
+njersey <- filter(usadf, grepl("New Jersey", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "NJ")
+nmexico <- filter(usadf, grepl("New Mexico", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "NM")
+ndakota <- filter(usadf, grepl("North Dakota", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "ND")
+oklahoma <- filter(usadf, grepl("Oklahoma", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "OK")
+oregon <- filter(usadf, grepl("Oregon", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "OR")
+rhode_island <- filter(usadf, grepl("Rhode Island", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "RI")
+scarolina <- filter(usadf, grepl("South Carolina", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "SC")
+utah <- filter(usadf, grepl("Utah", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "UT")
+vermont <- filter(usadf, grepl("Vermont", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "VT")
+wvirginia <- filter(usadf, grepl("West Virginia", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "WV")
+wisconsin <- filter(usadf, grepl("Wisconsin", usadf$filming_locations)) %>% 
+           summarise( rating = mean(review_rating, na.rm = TRUE), 
+           budget = mean(budget, na.rm = TRUE), total = n(), name = "WI")
+
+
+states <- rbind(washington,virginia,texas,tennessee,pennsylvania,ohio,new_york,ncarolina,mississippi,maryland,louisiana,georgia,florida,connecticut,california,alabama,alaska,arizona,arkanas, colorado, idaho,illinois,indiana,iowa,kansas,maine,massachusetts,michigan,minnesota,missouri,montana,ndakota,nebraska,nevada,nhampshire,njersey,nmexico,oklahoma,oregon,rhode_island,scarolina,utah,vermont,virginia,washington,wisconsin)
+
+
+
+```
+
+```{r}
+options(scipen = 999)
+
+state_summary <- states[order(states$rating ), ] %>% filter(total > 10)
+
+
+#create table with top ten filming locations
+top_ten <- state_summary[1:10,]
+
+#create bar plot
+ggplot(state_summary, aes(name, rating)) +
+  geom_histogram(aes(fill = "red"), stat = "identity", width = .7, show.legend = TRUE) +
+  labs(title = "Average Horror Film Rating", subtitle = "by Filming Location", caption = "source:Horror_movies.csv",
+       fill = "Budget")+
+  theme(panel.background = element_rect("white"), panel.grid.major = element_line("grey", linetype = "dashed")) +
+  xlab("Filming Location")+
+  ylab("Average Rating")
+
+```
+
+
+ =
